@@ -1,22 +1,27 @@
 #include <iostream>
 #include "stack.h"
 
-IntStack::IntStack(int capa) : max_capacity(capa), size(0), pos_in_stack(-1){
-    stack = new int[capa] ; 
+IntStack::IntStack() : size(0), max_capacity(2) {
+    stack = new int[max_capacity] ; 
 }
 
 void IntStack::push(int n){
     if (is_full()){
-        std::cerr << "full stack" << std::endl ;
-    } else 
-    {
-        std::cout << n << " is pushed." << std::endl;
 
-        pos_in_stack = (pos_in_stack+1) % max_capacity;
-        size ++;
+        max_capacity *= 2;
+        int* new_stack = new int[max_capacity];
+        std::copy(stack, stack + size, new_stack); 
+        delete[] stack;
 
-        stack[pos_in_stack] = n ;
+        stack = new_stack;
+        std::cout <<"Max capacity reached, new capacity : "<< max_capacity << "." << std::endl ;
+
     }
+
+    //std::cout << n << " is pushed." << std::endl;
+    size ++;
+    stack[ size - 1 ] = n ;
+
     return ;
 };
 int IntStack::get_value(int pos) const{
@@ -24,7 +29,7 @@ int IntStack::get_value(int pos) const{
         std::cerr<<"Out of range"<<std::endl ;
         return 0;
     }
-    return stack[(pos_in_stack + pos+max_capacity) % max_capacity] ;
+    return stack[ size + pos - 1 ] ;
 };
 
 void IntStack::pop(){
@@ -33,9 +38,7 @@ void IntStack::pop(){
         std::cerr << "Empty stack" << std::endl ;
     } else 
     {   
-        std::cout << "value popped " << std::endl;
-
-        pos_in_stack = (pos_in_stack-1+max_capacity) % max_capacity;
+        std::cout << "Top value popped. " << std::endl;
         size -- ;
     }
     return ;
@@ -46,7 +49,7 @@ bool IntStack::is_empty() const{
 };  
 
 bool IntStack::is_full() const{
-    return max_capacity == size ;
+    return size == max_capacity  ;
 };
 
 void IntStack::print_stack() const{
@@ -54,25 +57,19 @@ void IntStack::print_stack() const{
     // Loop from i=0 (Top) to size-1 (Bottom)
     for (int i=0; i<size; i++){
         // Calculate the index by starting at the top (pos_in_stack) and moving back i steps
-        int index = (pos_in_stack - i + max_capacity) % max_capacity;
+        int index = size - i - 1 ;
         std::cout << stack[index] << std::endl ;
     }
-    std::cout << "--------------------------------------" << std::endl;
+    std::cout << "--------------------------------------" << std::endl << std::endl ;
 };
 
 
 int main(){
 
-    IntStack pile = IntStack(5);
-    pile.push(4);
-    pile.push(5);
-    pile.push(2);
-    pile.push(3);
-    pile.push(9);
-    pile.push(10);
-    pile.print_stack();
-    pile.pop();
-    pile.get_value(3);
+    IntStack pile = IntStack();
+    for (int i = 0; i<265; i++){
+        pile.push(i);
+    }
     pile.print_stack();
 
     return 0;

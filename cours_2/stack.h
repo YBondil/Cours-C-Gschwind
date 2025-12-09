@@ -1,11 +1,10 @@
 struct IntStack {
-    
+
+    int max_capacity ;
     int size;
-    int max_capacity  = 5 ;
-    int pos_in_stack ;
     int * stack ;
 
-    IntStack(int max_capa); 
+    IntStack(); 
     ~IntStack(){ delete [] stack;}
 
     void push(int n);
